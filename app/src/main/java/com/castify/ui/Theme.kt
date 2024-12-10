@@ -1,13 +1,13 @@
-package com.castify.ui.theme
+package com.castify.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.ShapeDefaults
 import androidx.tv.material3.darkColorScheme
 import androidx.tv.material3.lightColorScheme
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun CastifyTheme(
     isInDarkTheme: Boolean = isSystemInDarkTheme(),
@@ -17,13 +17,19 @@ fun CastifyTheme(
         darkColorScheme(
             primary = Purple80,
             secondary = PurpleGrey80,
-            tertiary = Pink80
+            tertiary = Pink80,
+            surface = Black,
+            onSurface = White,
+            scrim = Gray300
         )
     } else {
         lightColorScheme(
             primary = Purple40,
             secondary = PurpleGrey40,
-            tertiary = Pink40
+            tertiary = Pink40,
+            surface = Black,
+            onSurface = White,
+            scrim = Gray300
         )
     }
     MaterialTheme(
@@ -32,3 +38,13 @@ fun CastifyTheme(
         content = content
     )
 }
+
+val CastifyCardShape = ShapeDefaults.ExtraSmall
+val CastifyButtonShape = ShapeDefaults.ExtraSmall
+val IconSize = 20.dp
+val CastifyBorderWidth = 3.dp
+
+/**
+ * Space to be given below every Lazy (or scrollable) vertical list throughout the app
+ */
+val CastifyBottomListPadding = 28.dp
