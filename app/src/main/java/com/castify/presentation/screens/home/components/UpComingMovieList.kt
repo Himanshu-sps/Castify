@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -32,13 +34,20 @@ import com.castify.presentation.common.MovieRow
 import com.castify.presentation.common.PosterImage
 import com.castify.presentation.common.gradientOverlay
 import com.castify.presentation.screens.home.ItemDirection
-import com.castify.presentation.screens.home.rememberChildPadding
 
 @Composable
 fun UpcomingMoviesList(
     modifier: Modifier,
     gradientColor: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
 ) {
+
+    // Create a FocusRequester for the first item
+    val firstItemFocusRequester = remember { FocusRequester() }
+
+    // Request focus for the first item when the screen is launched
+    LaunchedEffect(Unit) {
+        firstItemFocusRequester.requestFocus()
+    }
 
     val movieList = remember {
         listOf(
@@ -82,6 +91,7 @@ fun UpcomingMoviesList(
         gradientColor = gradientColor,
         movieList = movieList,
         sectionTitle = sectionTitle,
+        focusRequester = firstItemFocusRequester,
         onMovieClick = {},
         onMovieFocused = {
             selectedMovie = it
@@ -122,11 +132,11 @@ private fun MovieDescription(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = movie.name, style = MaterialTheme.typography.displaySmall)
+        Text(text = movie.name, style = MaterialTheme.typography.headlineMedium)
         Text(
             modifier = Modifier.fillMaxWidth(0.5f),
             text = "desc",
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
             fontWeight = FontWeight.Light
         )
@@ -141,6 +151,7 @@ private fun ImmersiveList(
     gradientColor: Color,
     movieList: List<TMDBMovie>,
     sectionTitle: String?,
+    focusRequester: FocusRequester ?= null,
     onFocusChanged: (FocusState) -> Unit,
     onMovieFocused: (TMDBMovie) -> Unit,
     onMovieClick: (TMDBMovie) -> Unit
@@ -148,7 +159,7 @@ private fun ImmersiveList(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(500.dp),
+            .height(480.dp),
         contentAlignment = Alignment.BottomStart
     ) {
         ImageBackground(
@@ -164,8 +175,8 @@ private fun ImmersiveList(
                 movie = selectedMovie,
                 modifier = modifier
                     .padding(
-                        start = rememberChildPadding().start,
-                        top = 40.dp
+                        start = 16.dp,
+                        top = 60.dp
                     )
                     .align(Alignment.TopStart)
             )
@@ -178,8 +189,8 @@ private fun ImmersiveList(
             showItemTitle = !isListFocused,
             onMovieSelected = onMovieClick,
             onMovieFocused = onMovieFocused,
-            modifier = Modifier
-                .onFocusChanged(onFocusChanged)
+            focusRequester = focusRequester,
+            modifier = Modifier.onFocusChanged(onFocusChanged)
         )
     }
 }

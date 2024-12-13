@@ -6,13 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text
-import com.castify.presentation.screens.home.HomeScreen
+import com.castify.presentation.screens.App
 import com.castify.ui.CastifyTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,21 +21,18 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
                     CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurface
+                        LocalContentColor provides MaterialTheme.colorScheme.onBackground
                     ) {
-                        //App()
-                        HomeScreen()
+                        App(
+                            onBackPressed = onBackPressedDispatcher::onBackPressed,
+                        )
+                        //HomeScreen()
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun App(modifier: Modifier = Modifier) {
-    Text(text = "My APPP")
 }

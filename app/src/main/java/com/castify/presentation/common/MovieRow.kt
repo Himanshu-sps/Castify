@@ -20,14 +20,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -42,26 +39,25 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.castify.domain.TMDBMovie
 import com.castify.presentation.screens.home.ItemDirection
-import com.castify.presentation.screens.home.rememberChildPadding
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MovieRow(
     movieList: List<TMDBMovie>,
     modifier: Modifier = Modifier,
     itemDirection: ItemDirection = ItemDirection.Vertical,
-    startPadding: Dp = rememberChildPadding().start,
-    endPadding: Dp = rememberChildPadding().end,
+    startPadding: Dp = 16.dp,
+    endPadding: Dp = 16.dp,
     title: String? = null,
-    titleStyle: TextStyle = MaterialTheme.typography.headlineSmall.copy(
+    titleStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(
         fontWeight = FontWeight.Medium
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
+    focusRequester: FocusRequester ?= null,
     onMovieSelected: (TMDBMovie) -> Unit = {},
     onMovieFocused: (TMDBMovie) -> Unit = {}
 ) {
-    val (lazyRow, firstItem) = remember { FocusRequester.createRefs() }
+
     Column(
         modifier = modifier.focusGroup()
     ) {
@@ -79,33 +75,31 @@ fun MovieRow(
         AnimatedContent(
             targetState = movieList,
             label = "",
-        ) { movieState ->
+        ) { tmdbMovieList ->
             LazyRow(
                 contentPadding = PaddingValues(start = startPadding, end = endPadding),
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
-                modifier = Modifier
-                    .focusRequester(lazyRow)
-                    .focusRestorer {
-                        firstItem
-                    }
             ) {
                 itemsIndexed(
-                    movieState,
+                    items = tmdbMovieList,
                     key = { _, movie ->
                         movie.id
                     }
                 ) { index, movie ->
                     val itemModifier = if (index == 0) {
-                        Modifier.focusRequester(firstItem)
+                        if (focusRequester != null) {
+                            Modifier.focusRequester(focusRequester)
+                        } else Modifier
                     } else {
                         Modifier
                     }
+
                     MoviesRowItem(
                         modifier = itemModifier.weight(1f),
                         index = index,
                         itemDirection = itemDirection,
                         onMovieSelected = {
-                            lazyRow.saveFocusedChild()
+                            //lazyRow.saveFocusedChild()
                             onMovieSelected(it)
                         },
                         onMovieFocused = onMovieFocused,
@@ -119,7 +113,6 @@ fun MovieRow(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MoviesRowItem(
     index: Int,
@@ -133,8 +126,8 @@ fun MoviesRowItem(
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
-    val imageWidth = if (itemDirection == ItemDirection.Vertical) 160.dp else 220.dp
-    val imageHeight = if (itemDirection == ItemDirection.Vertical) 220.dp else 160.dp
+    val imageWidth = if (itemDirection == ItemDirection.Vertical) 120.dp else 170.dp
+    val imageHeight = if (itemDirection == ItemDirection.Vertical) 170.dp else 120.dp
 
     MovieCard(
         onClick = { onMovieSelected(movie) },
@@ -164,13 +157,6 @@ fun MoviesRowItem(
                 isFocused = it.isFocused
                 if (it.isFocused) {
                     onMovieFocused(movie)
-                }
-            }
-            .focusProperties {
-                left = if (index == 0) {
-                    FocusRequester.Cancel
-                } else {
-                    FocusRequester.Default
                 }
             }
             .width(imageWidth)

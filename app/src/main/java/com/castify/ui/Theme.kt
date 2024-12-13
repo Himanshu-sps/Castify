@@ -15,12 +15,13 @@ fun CastifyTheme(
 ) {
     val colorScheme = if (isInDarkTheme) {
         darkColorScheme(
-            primary = Purple80,
-            secondary = PurpleGrey80,
-            tertiary = Pink80,
+            primary = Purple40,
+            secondary = PurpleGrey40,
+            tertiary = Pink40,
             surface = Black,
             onSurface = White,
-            scrim = Gray300
+            background = Gray,
+            onBackground = White
         )
     } else {
         lightColorScheme(
@@ -29,7 +30,8 @@ fun CastifyTheme(
             tertiary = Pink40,
             surface = Black,
             onSurface = White,
-            scrim = Gray300
+            background = Gray,
+            onBackground = White
         )
     }
     MaterialTheme(
