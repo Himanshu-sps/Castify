@@ -3,6 +3,7 @@ package com.castify.presentation.screens.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -29,6 +30,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -57,7 +63,7 @@ val drawerItems = DrawerItems.entries.toList()
 
 @Composable
 fun DashboardScreen(
-    onBackPressed: () -> Unit
+    onBackTriggered: () -> Unit
 ) {
 
     val drawerItemFocusRequesters = remember { drawerItems.map { FocusRequester() } }
@@ -80,13 +86,6 @@ fun DashboardScreen(
     }
 
     /**
-     * To focus back to selected item
-     */
-    LaunchedEffect(key1 = currentDrawerSelectedIndex) {
-        drawerItemFocusRequesters[currentDrawerSelectedIndex].requestFocus()
-    }
-
-    /**
      * When dashboard screen went off we need to remove attached listener as well
      */
     DisposableEffect(Unit) {
@@ -99,33 +98,67 @@ fun DashboardScreen(
         }
     }
 
-    /** Navigation Drawer **/
-    DashboardNavigationDrawer(
-        modifier = Modifier
-            .onFocusChanged { focusState ->
-                isDrawerItemFocused = focusState.isFocused
-            },
-        drawerItemFocusRequesters = drawerItemFocusRequesters,
-        drawerState = drawerState,
-        navController = navController,
-        selectedDrawerItemIndex = currentDrawerSelectedIndex,
-        onScreenSelection = { screenRoute ->
-
-            // On every screen selection hiding drawer if opened
+    BackPressHandledArea(
+        onBackPressed = {
+            // 1. If drawer is opened then on back pressed close the drawer and focus selected drawer option
             if (drawerState.currentValue == DrawerValue.Open) {
                 drawerState.setValue(DrawerValue.Closed)
+                drawerItemFocusRequesters[currentDrawerSelectedIndex].requestFocus()
+            }
+            else if (currentDrawerSelectedIndex == 1) onBackTriggered()
+            else if (!isDrawerItemFocused) {
+                drawerItemFocusRequesters[currentDrawerSelectedIndex].requestFocus()
+            } else {
+                drawerItemFocusRequesters[1].requestFocus()
+                //navController.popBackStack(route = ScreenRoutes.HomeScreenRoute, inclusive = true)
+                navController.navigate(route = ScreenRoutes.HomeScreenRoute)
             }
 
-            if (!currentRoute.contains(screenRoute.toString(), true)) {
-                navController.navigate(route = screenRoute) {
-                    if (screenRoute.toString().contains(ScreenRoutes.HomeScreenRoute.toString())) {
-                        popUpTo(
-                            route = ScreenRoutes.HomeScreenRoute
-                        )
-                    }
-                    launchSingleTop = true
-                }
+            /*if (!isTopBarVisible) {
+                isTopBarVisible = true
+                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
+            } else if (currentTopBarSelectedTabIndex == 0) onBackPressed()
+            else if (!isTopBarFocused) {
+                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
+            } else TopBarFocusRequesters[1].requestFocus()*/
+        },
+        mainScreenContent = {
+            /**
+             * To focus back to selected item
+             */
+            LaunchedEffect(key1 = currentDrawerSelectedIndex) {
+                drawerItemFocusRequesters[currentDrawerSelectedIndex].requestFocus()
             }
+
+            /** Navigation Drawer **/
+            DashboardNavigationDrawer(
+                modifier = Modifier
+                    .onFocusChanged { focusState ->
+                        isDrawerItemFocused = focusState.isFocused
+                    },
+                drawerItemFocusRequesters = drawerItemFocusRequesters,
+                drawerState = drawerState,
+                navController = navController,
+                selectedDrawerItemIndex = currentDrawerSelectedIndex,
+                onScreenSelection = { screenRoute ->
+
+                    // On every screen selection hiding drawer if opened
+                    if (drawerState.currentValue == DrawerValue.Open) {
+                        drawerState.setValue(DrawerValue.Closed)
+                    }
+
+                    if (!currentRoute.contains(screenRoute.toString(), true)) {
+                        navController.navigate(route = screenRoute) {
+                            if (screenRoute.toString().contains(ScreenRoutes.HomeScreenRoute.toString())) {
+                                popUpTo(
+                                    route = ScreenRoutes.HomeScreenRoute
+                                )
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            )
         }
     )
 }
@@ -269,3 +302,23 @@ private fun NavComposable(
         }
     }
 }
+
+@Composable
+private fun BackPressHandledArea(
+    onBackPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+    mainScreenContent: @Composable BoxScope.() -> Unit,
+) =
+    Box(
+        modifier = Modifier
+            .onPreviewKeyEvent {
+                if (it.key == Key.Back && it.type == KeyEventType.KeyUp) {
+                    onBackPressed()
+                    true
+                } else {
+                    false
+                }
+            }
+            .then(modifier),
+        content = mainScreenContent
+    )

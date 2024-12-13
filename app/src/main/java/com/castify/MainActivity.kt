@@ -27,9 +27,10 @@ class MainActivity : ComponentActivity() {
                         LocalContentColor provides MaterialTheme.colorScheme.onBackground
                     ) {
                         App(
-                            onBackPressed = onBackPressedDispatcher::onBackPressed,
+                            onBackTriggered = {
+                                this@MainActivity.finish()
+                            }
                         )
-                        //HomeScreen()
                     }
                 }
             }

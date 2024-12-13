@@ -16,7 +16,7 @@ import com.castify.ui.LightBlue
 
 @Composable
 fun App(
-    onBackPressed: () -> Unit
+    onBackTriggered: () -> Unit
 ) {
 
     /********* Navigation *********/
@@ -28,7 +28,7 @@ fun App(
         builder = {
             composable<ScreenRoutes.DashboardScreenRoute> {
                 DashboardScreen(
-                    onBackPressed = {}
+                    onBackTriggered = onBackTriggered
                 )
             }
         }

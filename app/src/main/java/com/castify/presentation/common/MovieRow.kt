@@ -99,7 +99,6 @@ fun MovieRow(
                         index = index,
                         itemDirection = itemDirection,
                         onMovieSelected = {
-                            //lazyRow.saveFocusedChild()
                             onMovieSelected(it)
                         },
                         onMovieFocused = onMovieFocused,
