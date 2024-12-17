@@ -50,6 +50,7 @@ import androidx.tv.material3.NavigationDrawerItem
 import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.Text
 import androidx.tv.material3.rememberDrawerState
+import com.castify.data.dto.TMDBMovie
 import com.castify.presentation.common.handleDPadKeyEvents
 import com.castify.presentation.screens.DrawerItems
 import com.castify.presentation.screens.ScreenRoutes
@@ -63,6 +64,7 @@ val drawerItems = DrawerItems.entries.toList()
 
 @Composable
 fun DashboardScreen(
+    onMovieClick: (TMDBMovie) -> Unit,
     onBackTriggered: () -> Unit
 ) {
 
@@ -113,14 +115,6 @@ fun DashboardScreen(
                 //navController.popBackStack(route = ScreenRoutes.HomeScreenRoute, inclusive = true)
                 navController.navigate(route = ScreenRoutes.HomeScreenRoute)
             }
-
-            /*if (!isTopBarVisible) {
-                isTopBarVisible = true
-                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
-            } else if (currentTopBarSelectedTabIndex == 0) onBackPressed()
-            else if (!isTopBarFocused) {
-                TopBarFocusRequesters[currentTopBarSelectedTabIndex + 1].requestFocus()
-            } else TopBarFocusRequesters[1].requestFocus()*/
         },
         mainScreenContent = {
             /**
@@ -140,6 +134,7 @@ fun DashboardScreen(
                 drawerState = drawerState,
                 navController = navController,
                 selectedDrawerItemIndex = currentDrawerSelectedIndex,
+                onMovieClick = onMovieClick,
                 onScreenSelection = { screenRoute ->
 
                     // On every screen selection hiding drawer if opened
@@ -147,7 +142,7 @@ fun DashboardScreen(
                         drawerState.setValue(DrawerValue.Closed)
                     }
 
-                    if (!currentRoute.contains(screenRoute.toString(), true)) {
+                    //if (!currentRoute.contains(screenRoute.toString(), true)) {
                         navController.navigate(route = screenRoute) {
                             if (screenRoute.toString().contains(ScreenRoutes.HomeScreenRoute.toString())) {
                                 popUpTo(
@@ -156,7 +151,7 @@ fun DashboardScreen(
                             }
                             launchSingleTop = true
                         }
-                    }
+                    //}
                 }
             )
         }
@@ -170,6 +165,7 @@ fun DashboardNavigationDrawer(
     drawerState: DrawerState,
     navController: NavHostController,
     selectedDrawerItemIndex: Int,
+    onMovieClick: (TMDBMovie) -> Unit,
     onScreenSelection: (ScreenRoutes) -> Unit
 ) {
 
@@ -179,7 +175,7 @@ fun DashboardNavigationDrawer(
         modifier = modifier,
         scrimBrush = Brush.horizontalGradient(
             listOf(
-                MaterialTheme.colorScheme.surface,
+                MaterialTheme.colorScheme.background,
                 Color.Transparent
             )
         ),
@@ -188,10 +184,10 @@ fun DashboardNavigationDrawer(
             Column(
                 modifier = modifier
                     .background(
-                        color = if (drawerState.currentValue == DrawerValue.Closed) {
-                            MaterialTheme.colorScheme.surface
+                        color = if (drawerState.currentValue == DrawerValue.Open) {
+                            MaterialTheme.colorScheme.background
                         } else {
-                            MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
+                            MaterialTheme.colorScheme.surface
                         }
                     )
                     .fillMaxHeight()
@@ -263,7 +259,8 @@ fun DashboardNavigationDrawer(
                 modifier = modifier.fillMaxSize()
             ) {
                 NavComposable(
-                    navController = navController
+                    navController = navController,
+                    onMovieClick = onMovieClick
                 )
             }
 
@@ -274,6 +271,7 @@ fun DashboardNavigationDrawer(
 @Composable
 private fun NavComposable(
     modifier: Modifier = Modifier,
+    onMovieClick: (TMDBMovie) -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     val closeDrawerWidth = 64.dp
@@ -286,7 +284,9 @@ private fun NavComposable(
         startDestination = ScreenRoutes.HomeScreenRoute,
     ) {
         composable<ScreenRoutes.HomeScreenRoute> {
-            HomeScreen()
+            HomeScreen(
+                onMovieClick = onMovieClick
+            )
         }
 
         composable<ScreenRoutes.SearchScreenRoute> {

@@ -1,4 +1,4 @@
-package com.castify.domain
+package com.castify.data.dto
 
 data class TMDBMovie(
     val id: String,

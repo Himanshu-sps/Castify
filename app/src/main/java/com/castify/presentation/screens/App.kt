@@ -10,8 +10,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.castify.presentation.common.ifElse
 import com.castify.presentation.screens.dashboard.DashboardScreen
+import com.castify.presentation.screens.movieDetails.MovieDetailsScreen
 import com.castify.ui.LightBlue
 
 @Composable
@@ -28,8 +30,20 @@ fun App(
         builder = {
             composable<ScreenRoutes.DashboardScreenRoute> {
                 DashboardScreen(
-                    onBackTriggered = onBackTriggered
+                    onBackTriggered = onBackTriggered,
+                    onMovieClick = { tmdbMovie ->
+                        navController.navigate(
+                            route = ScreenRoutes.MovieDetailsScreen(movieId = tmdbMovie.id)
+                        )
+                    }
                 )
+            }
+
+            composable<ScreenRoutes.MovieDetailsScreen> {
+                val args = it.toRoute<ScreenRoutes.MovieDetailsScreen>()
+                val movieId = args.movieId
+
+                MovieDetailsScreen()
             }
         }
     )

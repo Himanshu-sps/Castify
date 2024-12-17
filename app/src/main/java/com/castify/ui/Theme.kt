@@ -20,7 +20,7 @@ fun CastifyTheme(
             tertiary = Pink40,
             surface = Black,
             onSurface = White,
-            background = Gray,
+            background = MaterialGray,
             onBackground = White
         )
     } else {
@@ -30,7 +30,7 @@ fun CastifyTheme(
             tertiary = Pink40,
             surface = Black,
             onSurface = White,
-            background = Gray,
+            background = MaterialGray,
             onBackground = White
         )
     }
@@ -42,9 +42,11 @@ fun CastifyTheme(
 }
 
 val CastifyCardShape = ShapeDefaults.ExtraSmall
-val CastifyButtonShape = ShapeDefaults.ExtraSmall
+val CastifyButtonShape = ShapeDefaults.Small
 val IconSize = 20.dp
 val CastifyBorderWidth = 3.dp
+val CastifyTopContainerPadding = 30.dp
+val CastifyStartContainerPadding = 30.dp
 
 /**
  * Space to be given below every Lazy (or scrollable) vertical list throughout the app

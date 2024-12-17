@@ -6,7 +6,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.castify.domain.TMDBMovie
+import com.castify.data.dto.TMDBMovie
 
 @Composable
 fun PosterImage(

@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.castify.data.dto.TMDBMovie
 import com.castify.presentation.screens.home.components.UpcomingMoviesList
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onMovieClick: (TMDBMovie) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -17,7 +20,7 @@ fun HomeScreen() {
         // Section : 1 Immersive list
         item(contentType = "Upcoming Movies") {
             UpcomingMoviesList(
-                modifier = Modifier
+                onMovieClick = onMovieClick
             )
         }
     }

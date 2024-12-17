@@ -24,21 +24,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.castify.domain.TMDBMovie
+import com.castify.data.dto.TMDBMovie
+import com.castify.presentation.common.GradientBackground
 import com.castify.presentation.common.MovieRow
 import com.castify.presentation.common.PosterImage
-import com.castify.presentation.common.gradientOverlay
 import com.castify.presentation.screens.home.ItemDirection
 
 @Composable
 fun UpcomingMoviesList(
-    modifier: Modifier,
-    gradientColor: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+    onMovieClick: (TMDBMovie) -> Unit
 ) {
 
     // Create a FocusRequester for the first item
@@ -85,14 +83,13 @@ fun UpcomingMoviesList(
     val sectionTitle = "Upcoming Movies"
 
     ImmersiveList(
-        modifier = modifier,
+        modifier = Modifier,
         selectedMovie = selectedMovie,
         isListFocused = isListFocused,
-        gradientColor = gradientColor,
         movieList = movieList,
         sectionTitle = sectionTitle,
         focusRequester = firstItemFocusRequester,
-        onMovieClick = {},
+        onMovieClick = onMovieClick,
         onMovieFocused = {
             selectedMovie = it
         },
@@ -148,10 +145,9 @@ private fun ImmersiveList(
     modifier: Modifier = Modifier,
     selectedMovie: TMDBMovie,
     isListFocused: Boolean,
-    gradientColor: Color,
     movieList: List<TMDBMovie>,
     sectionTitle: String?,
-    focusRequester: FocusRequester ?= null,
+    focusRequester: FocusRequester? = null,
     onFocusChanged: (FocusState) -> Unit,
     onMovieFocused: (TMDBMovie) -> Unit,
     onMovieClick: (TMDBMovie) -> Unit
@@ -167,9 +163,11 @@ private fun ImmersiveList(
             visible = isListFocused,
             modifier = modifier
                 .height(432.dp)
-                .gradientOverlay(gradientColor)
                 .align(Alignment.TopStart)
         )
+
+        GradientBackground(Modifier.fillMaxSize())
+
         if (isListFocused) {
             MovieDescription(
                 movie = selectedMovie,

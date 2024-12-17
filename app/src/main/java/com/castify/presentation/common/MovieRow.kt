@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.castify.domain.TMDBMovie
+import com.castify.data.dto.TMDBMovie
 import com.castify.presentation.screens.home.ItemDirection
 
 @Composable
