@@ -31,9 +31,9 @@ fun App(
             composable<ScreenRoutes.DashboardScreenRoute> {
                 DashboardScreen(
                     onBackTriggered = onBackTriggered,
-                    onMovieClick = { tmdbMovie ->
+                    onMovieClick = { movie ->
                         navController.navigate(
-                            route = ScreenRoutes.MovieDetailsScreen(movieId = tmdbMovie.id)
+                            route = ScreenRoutes.MovieDetailsScreen(movieId = movie.id.toString())
                         )
                     }
                 )

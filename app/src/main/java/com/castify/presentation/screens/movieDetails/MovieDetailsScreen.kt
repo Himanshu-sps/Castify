@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.castify.data.dto.TMDBMovie
+import com.castify.data.dto.MovieDetailsDTO
 import com.castify.presentation.common.CastifyOutlineIconButton
 import com.castify.presentation.common.GradientBackground
 import com.castify.presentation.common.PosterImage
@@ -39,10 +39,10 @@ fun MovieDetailsScreen() {
                 .width(650.dp)
                 .height(400.dp)
                 .align(Alignment.TopEnd),
-            movie = TMDBMovie(
-                id = "1",
+            movie = MovieDetailsDTO(
+                id = 1,
                 name = "On the bridge",
-                imageUri = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/2_3-300/on-the-bridge.jpg"
+                poster_path = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/2_3-300/on-the-bridge.jpg"
             )
         )
 

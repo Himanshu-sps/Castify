@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,68 +27,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.castify.data.dto.TMDBMovie
+import com.castify.data.dto.MovieDetailsDTO
 import com.castify.presentation.common.GradientBackground
 import com.castify.presentation.common.MovieRow
 import com.castify.presentation.common.PosterImage
 import com.castify.presentation.screens.home.ItemDirection
 
+// Create a FocusRequester for the first item
+//val firstItemFocusRequester = FocusRequester()
+
 @Composable
 fun UpcomingMoviesList(
-    onMovieClick: (TMDBMovie) -> Unit
+    sectionTitle: String,
+    upcomingMovies: List<MovieDetailsDTO>,
+    onMovieClick: (MovieDetailsDTO) -> Unit
 ) {
-
-    // Create a FocusRequester for the first item
-    val firstItemFocusRequester = remember { FocusRequester() }
-
     // Request focus for the first item when the screen is launched
-    LaunchedEffect(Unit) {
+    /*LaunchedEffect(Unit) {
         firstItemFocusRequester.requestFocus()
-    }
-
-    val movieList = remember {
-        listOf(
-            TMDBMovie(
-                id = "1",
-                name = "On the bridge",
-                imageUri = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/2_3-300/on-the-bridge.jpg"
-            ),
-            TMDBMovie(
-                id = "2",
-                name = "Inventor",
-                imageUri = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/2_3-300/inventor.jpg"
-            ),
-            TMDBMovie(
-                id = "3",
-                name = "On the bridge",
-                imageUri = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/2_3-300/on-the-bridge.jpg"
-            ),
-            TMDBMovie(
-                id = "4",
-                name = "Inventor",
-                imageUri = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/2_3-300/inventor.jpg"
-            ),
-            TMDBMovie(
-                id = "5",
-                name = "Cyber net",
-                imageUri = "https://storage.googleapis.com/androiddevelopers/samples/media/posters/16_9-400/cyber-net.jpg"
-            )
-        )
-    }
+    }*/
 
     var isListFocused by remember { mutableStateOf(false) }
-    var selectedMovie by remember(movieList) { mutableStateOf(movieList.first()) }
-
-    val sectionTitle = "Upcoming Movies"
+    var selectedMovie by remember(upcomingMovies) { mutableStateOf(upcomingMovies.first()) }
 
     ImmersiveList(
         modifier = Modifier,
         selectedMovie = selectedMovie,
         isListFocused = isListFocused,
-        movieList = movieList,
+        movieList = upcomingMovies,
         sectionTitle = sectionTitle,
-        focusRequester = firstItemFocusRequester,
-        onMovieClick = onMovieClick,
+        focusRequester = null,
+        onMovieClick = {
+            onMovieClick.invoke(it)
+        },
         onMovieFocused = {
             selectedMovie = it
         },
@@ -101,7 +71,7 @@ fun UpcomingMoviesList(
 
 @Composable
 private fun ImageBackground(
-    movie: TMDBMovie,
+    movie: MovieDetailsDTO,
     visible: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -122,17 +92,17 @@ private fun ImageBackground(
 
 @Composable
 private fun MovieDescription(
-    movie: TMDBMovie,
+    movie: MovieDetailsDTO,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = movie.name, style = MaterialTheme.typography.headlineMedium)
+        Text(text = movie.title ?: "Title", style = MaterialTheme.typography.headlineMedium)
         Text(
             modifier = Modifier.fillMaxWidth(0.5f),
-            text = "desc",
+            text = movie.overview ?: "Description",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
             fontWeight = FontWeight.Light
@@ -143,14 +113,14 @@ private fun MovieDescription(
 @Composable
 private fun ImmersiveList(
     modifier: Modifier = Modifier,
-    selectedMovie: TMDBMovie,
+    selectedMovie: MovieDetailsDTO,
     isListFocused: Boolean,
-    movieList: List<TMDBMovie>,
+    movieList: List<MovieDetailsDTO>,
     sectionTitle: String?,
     focusRequester: FocusRequester? = null,
     onFocusChanged: (FocusState) -> Unit,
-    onMovieFocused: (TMDBMovie) -> Unit,
-    onMovieClick: (TMDBMovie) -> Unit
+    onMovieFocused: (MovieDetailsDTO) -> Unit,
+    onMovieClick: (MovieDetailsDTO) -> Unit
 ) {
     Box(
         modifier = modifier

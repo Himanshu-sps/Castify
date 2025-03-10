@@ -36,6 +36,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -50,21 +51,23 @@ import androidx.tv.material3.NavigationDrawerItem
 import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.Text
 import androidx.tv.material3.rememberDrawerState
-import com.castify.data.dto.TMDBMovie
+import com.castify.data.dto.MovieDetailsDTO
 import com.castify.presentation.common.handleDPadKeyEvents
 import com.castify.presentation.screens.DrawerItems
 import com.castify.presentation.screens.ScreenRoutes
 import com.castify.presentation.screens.favourites.FavouriteScreen
 import com.castify.presentation.screens.home.HomeScreen
+import com.castify.presentation.screens.home.HomeViewModel
 import com.castify.presentation.screens.search.SearchScreen
 import com.castify.presentation.screens.settings.SettingsScreen
 import com.castify.ui.Gray
+import org.koin.androidx.compose.koinViewModel
 
 val drawerItems = DrawerItems.entries.toList()
 
 @Composable
 fun DashboardScreen(
-    onMovieClick: (TMDBMovie) -> Unit,
+    onMovieClick: (MovieDetailsDTO) -> Unit,
     onBackTriggered: () -> Unit
 ) {
 
@@ -165,7 +168,7 @@ fun DashboardNavigationDrawer(
     drawerState: DrawerState,
     navController: NavHostController,
     selectedDrawerItemIndex: Int,
-    onMovieClick: (TMDBMovie) -> Unit,
+    onMovieClick: (MovieDetailsDTO) -> Unit,
     onScreenSelection: (ScreenRoutes) -> Unit
 ) {
 
@@ -271,7 +274,7 @@ fun DashboardNavigationDrawer(
 @Composable
 private fun NavComposable(
     modifier: Modifier = Modifier,
-    onMovieClick: (TMDBMovie) -> Unit,
+    onMovieClick: (MovieDetailsDTO) -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     val closeDrawerWidth = 64.dp
@@ -284,7 +287,10 @@ private fun NavComposable(
         startDestination = ScreenRoutes.HomeScreenRoute,
     ) {
         composable<ScreenRoutes.HomeScreenRoute> {
+            val viewModel = koinViewModel<HomeViewModel>()
+            val state by viewModel.state.collectAsStateWithLifecycle()
             HomeScreen(
+                homeListState = state,
                 onMovieClick = onMovieClick
             )
         }

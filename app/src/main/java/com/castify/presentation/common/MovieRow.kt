@@ -37,12 +37,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.castify.data.dto.TMDBMovie
+import com.castify.data.dto.MovieDetailsDTO
 import com.castify.presentation.screens.home.ItemDirection
 
 @Composable
 fun MovieRow(
-    movieList: List<TMDBMovie>,
+    movieList: List<MovieDetailsDTO>,
     modifier: Modifier = Modifier,
     itemDirection: ItemDirection = ItemDirection.Vertical,
     startPadding: Dp = 16.dp,
@@ -54,8 +54,8 @@ fun MovieRow(
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
     focusRequester: FocusRequester ?= null,
-    onMovieSelected: (TMDBMovie) -> Unit = {},
-    onMovieFocused: (TMDBMovie) -> Unit = {}
+    onMovieSelected: (MovieDetailsDTO) -> Unit = {},
+    onMovieFocused: (MovieDetailsDTO) -> Unit = {}
 ) {
 
     Column(
@@ -83,7 +83,7 @@ fun MovieRow(
                 itemsIndexed(
                     items = tmdbMovieList,
                     key = { _, movie ->
-                        movie.id
+                        movie.id !!
                     }
                 ) { index, movie ->
                     val itemModifier = if (index == 0) {
@@ -115,13 +115,13 @@ fun MovieRow(
 @Composable
 fun MoviesRowItem(
     index: Int,
-    movie: TMDBMovie,
-    onMovieSelected: (TMDBMovie) -> Unit,
+    movie: MovieDetailsDTO,
+    onMovieSelected: (MovieDetailsDTO) -> Unit,
     showItemTitle: Boolean,
     showIndexOverImage: Boolean,
     modifier: Modifier = Modifier,
     itemDirection: ItemDirection = ItemDirection.Vertical,
-    onMovieFocused: (TMDBMovie) -> Unit = {},
+    onMovieFocused: (MovieDetailsDTO) -> Unit = {},
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -137,7 +137,7 @@ fun MoviesRowItem(
                     label = "",
                 )
                 Text(
-                    text = movie.name,
+                    text = movie.name ?: "",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -173,7 +173,7 @@ fun MoviesRowItem(
 
 @Composable
 private fun MoviesRowItemImage(
-    movie: TMDBMovie,
+    movie: MovieDetailsDTO,
     showIndexOverImage: Boolean,
     index: Int,
     modifier: Modifier = Modifier,

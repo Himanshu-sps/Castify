@@ -94,4 +94,7 @@ dependencies {
     // Compose Previews
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    // gson
+    implementation(libs.gson)
+
 }
