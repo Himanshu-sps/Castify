@@ -6,20 +6,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.castify.data.dto.MovieDetailsDTO
+import com.castify.data.entities.Movie
 
 @Composable
 fun PosterImage(
-    movie: MovieDetailsDTO,
+    movie: Movie,
     modifier: Modifier = Modifier,
 ) {
     AsyncImage(
         modifier = modifier,
         model = ImageRequest.Builder(LocalContext.current)
             .crossfade(true)
-            .data(movie.poster_path)
+            .data(movie.posterUri)
             .build(),
-        contentDescription = movie.name,
+        contentDescription = movie.title,
         contentScale = ContentScale.Crop
     )
 }

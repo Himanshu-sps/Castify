@@ -61,12 +61,12 @@ import com.castify.presentation.screens.home.HomeViewModel
 import com.castify.presentation.screens.search.SearchScreen
 import com.castify.presentation.screens.settings.SettingsScreen
 import com.castify.ui.Gray
-import org.koin.androidx.compose.koinViewModel
 
 val drawerItems = DrawerItems.entries.toList()
 
 @Composable
 fun DashboardScreen(
+    homeViewModel: HomeViewModel,
     onMovieClick: (MovieDetailsDTO) -> Unit,
     onBackTriggered: () -> Unit
 ) {
@@ -133,6 +133,7 @@ fun DashboardScreen(
                     .onFocusChanged { focusState ->
                         isDrawerItemFocused = focusState.isFocused
                     },
+                homeViewModel = homeViewModel,
                 drawerItemFocusRequesters = drawerItemFocusRequesters,
                 drawerState = drawerState,
                 navController = navController,
@@ -164,6 +165,7 @@ fun DashboardScreen(
 @Composable
 fun DashboardNavigationDrawer(
     modifier: Modifier,
+    homeViewModel: HomeViewModel,
     drawerItemFocusRequesters: List<FocusRequester>,
     drawerState: DrawerState,
     navController: NavHostController,
@@ -262,6 +264,7 @@ fun DashboardNavigationDrawer(
                 modifier = modifier.fillMaxSize()
             ) {
                 NavComposable(
+                    homeViewModel = homeViewModel,
                     navController = navController,
                     onMovieClick = onMovieClick
                 )
@@ -274,6 +277,7 @@ fun DashboardNavigationDrawer(
 @Composable
 private fun NavComposable(
     modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel,
     onMovieClick: (MovieDetailsDTO) -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
@@ -287,8 +291,7 @@ private fun NavComposable(
         startDestination = ScreenRoutes.HomeScreenRoute,
     ) {
         composable<ScreenRoutes.HomeScreenRoute> {
-            val viewModel = koinViewModel<HomeViewModel>()
-            val state by viewModel.state.collectAsStateWithLifecycle()
+            val state by homeViewModel.state.collectAsStateWithLifecycle()
             HomeScreen(
                 homeListState = state,
                 onMovieClick = onMovieClick

@@ -11,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.MaterialTheme
 import com.castify.presentation.screens.App
+import com.castify.presentation.screens.home.HomeViewModel
 import com.castify.ui.CastifyTheme
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +28,10 @@ class MainActivity : ComponentActivity() {
                     CompositionLocalProvider(
                         LocalContentColor provides MaterialTheme.colorScheme.onBackground
                     ) {
+                        val homeViewModel: HomeViewModel = koinViewModel()
+
                         App(
+                            homeViewModel = homeViewModel,
                             onBackTriggered = {
                                 this@MainActivity.finish()
                             }

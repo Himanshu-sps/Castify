@@ -11,13 +11,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.castify.data.entities.Movie
 import com.castify.presentation.common.ifElse
 import com.castify.presentation.screens.dashboard.DashboardScreen
+import com.castify.presentation.screens.home.HomeViewModel
 import com.castify.presentation.screens.movieDetails.MovieDetailsScreen
+import com.castify.presentation.screens.videoPlayerScreen.VideoPlayerScreen
 import com.castify.ui.LightBlue
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 @Composable
 fun App(
+    homeViewModel: HomeViewModel,
     onBackTriggered: () -> Unit
 ) {
 
@@ -30,10 +37,11 @@ fun App(
         builder = {
             composable<ScreenRoutes.DashboardScreenRoute> {
                 DashboardScreen(
+                    homeViewModel = homeViewModel,
                     onBackTriggered = onBackTriggered,
                     onMovieClick = { movie ->
                         navController.navigate(
-                            route = ScreenRoutes.MovieDetailsScreen(movieId = movie.id.toString())
+                            route = ScreenRoutes.MovieDetailsScreen(movieId = movie.id)
                         )
                     }
                 )
@@ -43,7 +51,27 @@ fun App(
                 val args = it.toRoute<ScreenRoutes.MovieDetailsScreen>()
                 val movieId = args.movieId
 
-                MovieDetailsScreen()
+                MovieDetailsScreen(
+                    movieId = movieId,
+                    homeViewModel = homeViewModel,
+                    moveToVideoPlayerScreen = { movie ->
+                        val jsonMovie = Gson().toJson(movie)
+                        navController.navigate(
+                            route = ScreenRoutes.VideoPlayerScreen(movie = jsonMovie)
+                        )
+                    }
+                )
+            }
+
+            composable<ScreenRoutes.VideoPlayerScreen> {
+                val args = it.toRoute<ScreenRoutes.VideoPlayerScreen>()
+                val jsonMovie = args.movie
+
+                val movieType: Type = object : TypeToken<Movie>() {}.type
+                val movie = Gson().fromJson<Movie>(jsonMovie, movieType)
+                VideoPlayerScreen(
+                    movie = movie
+                )
             }
         }
     )

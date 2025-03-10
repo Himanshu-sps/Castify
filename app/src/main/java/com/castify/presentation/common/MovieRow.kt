@@ -38,8 +38,33 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.castify.data.dto.MovieDetailsDTO
+import com.castify.data.entities.toMovie
 import com.castify.presentation.screens.home.ItemDirection
 
+/**
+ * A reusable composable that displays a horizontal row of movie items optimized for TV navigation.
+ * Supports dynamic focus management, animations, and customizable layout options.
+ *
+ * Features:
+ * - TV-optimized focus management with [FocusRequester]s
+ * - Optional section title
+ * - Customizable item layout (vertical/horizontal)
+ * - Animated content transitions
+ * - Focus-based visual feedback
+ *
+ * @param movieList List of movies to display in the row
+ * @param modifier Optional modifier for customizing the layout
+ * @param itemDirection Direction of individual movie items (vertical/horizontal orientation)
+ * @param startPadding Padding at the start of the row
+ * @param endPadding Padding at the end of the row
+ * @param title Optional title to display above the row
+ * @param titleStyle Style to apply to the title text
+ * @param showItemTitle Whether to show titles below movie items
+ * @param showIndexOverImage Whether to show index numbers over movie posters
+ * @param focusRequesters List of focus requesters for TV navigation, one per movie item
+ * @param onMovieSelected Callback invoked when a movie is selected
+ * @param onMovieFocused Callback invoked when a movie receives focus
+ */
 @Composable
 fun MovieRow(
     movieList: List<MovieDetailsDTO>,
@@ -53,11 +78,10 @@ fun MovieRow(
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
-    focusRequester: FocusRequester ?= null,
+    focusRequesters: List<FocusRequester> = emptyList(),
     onMovieSelected: (MovieDetailsDTO) -> Unit = {},
     onMovieFocused: (MovieDetailsDTO) -> Unit = {}
 ) {
-
     Column(
         modifier = modifier.focusGroup()
     ) {
@@ -82,17 +106,11 @@ fun MovieRow(
             ) {
                 itemsIndexed(
                     items = tmdbMovieList,
-                    key = { _, movie ->
-                        movie.id !!
-                    }
+                    key = { _, movie -> movie.id!! }
                 ) { index, movie ->
-                    val itemModifier = if (index == 0) {
-                        if (focusRequester != null) {
-                            Modifier.focusRequester(focusRequester)
-                        } else Modifier
-                    } else {
-                        Modifier
-                    }
+                    val itemModifier = if (index < focusRequesters.size) {
+                        Modifier.focusRequester(focusRequesters[index])
+                    } else Modifier
 
                     MoviesRowItem(
                         modifier = itemModifier.weight(1f),
@@ -112,6 +130,25 @@ fun MovieRow(
     }
 }
 
+/**
+ * A single item in the movie row that displays a movie poster with optional title and index.
+ * Handles focus states and provides visual feedback for TV navigation.
+ *
+ * Features:
+ * - Focus-based animations
+ * - Optional title display
+ * - Optional index overlay
+ * - Customizable dimensions based on orientation
+ *
+ * @param index Position of the item in the list
+ * @param movie Movie data to display
+ * @param onMovieSelected Callback invoked when this item is selected
+ * @param showItemTitle Whether to show the movie title
+ * @param showIndexOverImage Whether to show the index number over the poster
+ * @param modifier Optional modifier for customizing the layout
+ * @param itemDirection Direction/orientation of the item
+ * @param onMovieFocused Callback invoked when this item receives focus
+ */
 @Composable
 fun MoviesRowItem(
     index: Int,
@@ -171,6 +208,15 @@ fun MoviesRowItem(
     }
 }
 
+/**
+ * Displays a movie poster image with an optional index overlay.
+ * Handles the layout and styling of the poster image and index number.
+ *
+ * @param movie Movie data containing the poster image information
+ * @param showIndexOverImage Whether to show the index number overlay
+ * @param index Position of the movie in the list
+ * @param modifier Optional modifier for customizing the layout
+ */
 @Composable
 private fun MoviesRowItemImage(
     movie: MovieDetailsDTO,
@@ -180,7 +226,7 @@ private fun MoviesRowItemImage(
 ) {
     Box(contentAlignment = Alignment.CenterStart) {
         PosterImage(
-            movie = movie,
+            movie = movie.toMovie(),
             modifier = modifier
                 .fillMaxSize()
                 .drawWithContent {

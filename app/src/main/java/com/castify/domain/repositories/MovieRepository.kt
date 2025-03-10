@@ -7,4 +7,5 @@ import com.castify.data.dto.HomePageResponse
 interface MovieRepository {
     suspend fun getHomePageData(): ResultWrapper<List<HomePageResponse>, NetworkError>
     suspend fun getHomePageDataFromAssets(): List<HomePageResponse>
+
 }

@@ -28,6 +28,11 @@ sealed class ScreenRoutes {
     data class MovieDetailsScreen(
         val movieId: String
     ): ScreenRoutes()
+
+    @Serializable
+    data class VideoPlayerScreen(
+        val movie: String
+    ): ScreenRoutes()
 }
 
 enum class DrawerItems(

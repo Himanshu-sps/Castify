@@ -1,26 +1,16 @@
 package com.castify.data.dto
 
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
-
-/*data class HomePageResponse(
-    @SerializedName("result")
-    val result: List<Result?>? = listOf()
-) {
-    data class Result(
-        @SerializedName("details")
-        val details: List<Detail?>? = listOf(),
-        @SerializedName("id")
-        val id: Int? = 0,
-        @SerializedName("title")
-        val title: String? = ""
-    )
-}*/
 
 @Serializable
 data class HomePageResponse(
+    @SerializedName("sectionId")
+    val sectionId: String? = "0",
+    @SerializedName("details")
     val details: List<MovieDetailsDTO> = listOf(),
-    val id: Int? = 0,
+    @SerializedName("title")
     val title: String? = ""
 )
 
@@ -30,7 +20,7 @@ data class MovieDetailsDTO(
     val backdrop_path: String? = "",
     val first_air_date: String? = "",
     val genre_ids: List<Int?>? = listOf(),
-    val id: Int? = 0,
+    val id: String = "",
     val name: String? = "",
     val origin_country: List<String?>? = listOf(),
     val original_language: String? = "",
@@ -41,7 +31,7 @@ data class MovieDetailsDTO(
     val poster_path: String? = "",
     val release_date: String? = "",
     val title: String? = "",
-    val video: Boolean? = false,
+    val videoUri: String? = "",
     val vote_average: Double? = 0.0,
     val vote_count: Int? = 0
 )
