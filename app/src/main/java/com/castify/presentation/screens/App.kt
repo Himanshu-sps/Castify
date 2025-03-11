@@ -16,7 +16,7 @@ import com.castify.presentation.common.ifElse
 import com.castify.presentation.screens.dashboard.DashboardScreen
 import com.castify.presentation.screens.home.HomeViewModel
 import com.castify.presentation.screens.movieDetails.MovieDetailsScreen
-import com.castify.presentation.screens.videoPlayerScreen.VideoPlayerScreen
+import com.castify.presentation.screens.videoPlayer.VideoPlayerScreen
 import com.castify.ui.LightBlue
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -70,7 +70,10 @@ fun App(
                 val movieType: Type = object : TypeToken<Movie>() {}.type
                 val movie = Gson().fromJson<Movie>(jsonMovie, movieType)
                 VideoPlayerScreen(
-                    movie = movie
+                    movie = movie,
+                    onBackPressed = {
+                        navController.navigateUp()
+                    }
                 )
             }
         }

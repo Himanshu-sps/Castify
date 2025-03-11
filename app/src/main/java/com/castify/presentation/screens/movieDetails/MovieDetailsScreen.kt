@@ -86,7 +86,10 @@ fun MovieDetailsScreen(
                     title = homeState.selectedMovie?.title,
                     posterUri = homeState.selectedMovie?.posterUri,
                     videoUri = homeState.selectedMovie?.videoUri,
-                    overview = homeState.selectedMovie?.overview
+                    overview = homeState.selectedMovie?.overview,
+                    releaseDate = homeState.selectedMovie?.releaseDate,
+                    isAdult = homeState.selectedMovie?.isAdult,
+                    subtitleUri = homeState.selectedMovie?.subtitleUri
                 )
             )
 

@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 
 fun Modifier.gradientOverlay(gradientColor: Color): Modifier =
     drawWithCache {
@@ -48,6 +49,41 @@ fun Modifier.gradientOverlay(gradientColor: Color): Modifier =
         }
     }
 
+fun Modifier.handleDPadPreviewKeyEvents(
+    onLeft: (() -> Unit)? = null,
+    onRight: (() -> Unit)? = null,
+    onEnter: (() -> Unit)? = null
+) = onPreviewKeyEvent {
+    fun onActionUp(block: () -> Unit) {
+        if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
+    }
+
+    when (it.nativeKeyEvent.keyCode) {
+        KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT -> {
+            onLeft?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT -> {
+            onRight?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+            onEnter?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+    }
+
+    false
+}
+
 /**
  * Handles all D-Pad Keys
  * */
@@ -85,6 +121,29 @@ fun Modifier.handleDPadKeyEvents(
     false
 }
 
+fun Modifier.handleDPadBackKeys(
+    onBackPress: () -> Unit
+): Modifier {
+    return this.onKeyEvent { keyEvent ->
+        when (keyEvent.nativeKeyEvent.keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                onBackPress()
+                true
+            }
+            else -> false
+        }
+    }
+}
+
+/**
+ * Used to apply modifiers conditionally.
+ */
+fun Modifier.ifElse(
+    condition: () -> Boolean,
+    ifTrueModifier: Modifier,
+    ifFalseModifier: Modifier = Modifier
+): Modifier = then(if (condition()) ifTrueModifier else ifFalseModifier)
+
 /**
  * Used to apply modifiers conditionally.
  */
@@ -92,4 +151,4 @@ fun Modifier.ifElse(
     condition: Boolean,
     ifTrueModifier: Modifier,
     ifFalseModifier: Modifier = Modifier
-): Modifier = if(condition) ifTrueModifier else ifFalseModifier
+): Modifier = ifElse({ condition }, ifTrueModifier, ifFalseModifier)

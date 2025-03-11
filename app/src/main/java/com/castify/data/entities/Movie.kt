@@ -9,7 +9,10 @@ data class Movie(
     val videoUri: String?,
     val title: String?,
     val posterUri: String?,
-    val overview: String?
+    val overview: String?,
+    val releaseDate: String?,
+    val isAdult: Boolean?,
+    val subtitleUri: String?,
 )
 
 fun MovieDetailsDTO.toMovie(): Movie {
@@ -18,6 +21,9 @@ fun MovieDetailsDTO.toMovie(): Movie {
         videoUri = videoUri,
         title = title,
         posterUri = poster_path,
-        overview = overview
+        overview = overview,
+        releaseDate = release_date,
+        isAdult = adult ?: false,
+        subtitleUri = "hello"
     )
 }

@@ -52,7 +52,7 @@ import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.Text
 import androidx.tv.material3.rememberDrawerState
 import com.castify.data.dto.MovieDetailsDTO
-import com.castify.presentation.common.handleDPadKeyEvents
+import com.castify.presentation.common.handleDPadPreviewKeyEvents
 import com.castify.presentation.screens.DrawerItems
 import com.castify.presentation.screens.ScreenRoutes
 import com.castify.presentation.screens.favourites.FavouriteScreen
@@ -227,7 +227,7 @@ fun DashboardNavigationDrawer(
                             modifier = modifier
                                 .padding(end = backgroundContentPadding)
                                 .focusRequester(drawerItemFocusRequesters[index])
-                                .handleDPadKeyEvents(
+                                .handleDPadPreviewKeyEvents(
                                     onLeft = {
                                         drawerItemFocusRequesters[selectedDrawerItemIndex].requestFocus()
                                     }
