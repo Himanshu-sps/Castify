@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import com.castify.data.dto.MovieDetailsDTO
 import com.castify.presentation.screens.home.components.UpcomingMoviesList
 
 @Composable
 fun HomeScreen(
     homeListState: HomeListState,
-    onMovieClick: (MovieDetailsDTO) -> Unit
+    onMovieClick: (MovieDetailsDTO) -> Unit,
+    firstUpcomingMovieFocusRequester: FocusRequester
 ) {
 
     LazyColumn(
@@ -26,7 +28,8 @@ fun HomeScreen(
                 UpcomingMoviesList(
                     sectionTitle = "Upcoming Movies",
                     upcomingMovies = homeListState.upcomingMovies,
-                    onMovieClick = onMovieClick
+                    onMovieClick = onMovieClick,
+                    firstItemFocusRequester = firstUpcomingMovieFocusRequester
                 )
             }
         }

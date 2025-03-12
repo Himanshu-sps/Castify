@@ -61,7 +61,7 @@ import com.castify.presentation.screens.home.ItemDirection
  * @param titleStyle Style to apply to the title text
  * @param showItemTitle Whether to show titles below movie items
  * @param showIndexOverImage Whether to show index numbers over movie posters
- * @param focusRequesters List of focus requesters for TV navigation, one per movie item
+ * @param focusRequester Optional focus requester for TV navigation
  * @param onMovieSelected Callback invoked when a movie is selected
  * @param onMovieFocused Callback invoked when a movie receives focus
  */
@@ -78,7 +78,7 @@ fun MovieRow(
     ),
     showItemTitle: Boolean = true,
     showIndexOverImage: Boolean = false,
-    focusRequesters: List<FocusRequester> = emptyList(),
+    focusRequester: FocusRequester? = null,
     onMovieSelected: (MovieDetailsDTO) -> Unit = {},
     onMovieFocused: (MovieDetailsDTO) -> Unit = {}
 ) {
@@ -108,17 +108,15 @@ fun MovieRow(
                     items = tmdbMovieList,
                     key = { _, movie -> movie.id!! }
                 ) { index, movie ->
-                    val itemModifier = if (index < focusRequesters.size) {
-                        Modifier.focusRequester(focusRequesters[index])
+                    val itemModifier = if (index == 0 && focusRequester != null) {
+                        Modifier.focusRequester(focusRequester)
                     } else Modifier
 
                     MoviesRowItem(
                         modifier = itemModifier.weight(1f),
                         index = index,
                         itemDirection = itemDirection,
-                        onMovieSelected = {
-                            onMovieSelected(it)
-                        },
+                        onMovieSelected = onMovieSelected,
                         onMovieFocused = onMovieFocused,
                         movie = movie,
                         showItemTitle = showItemTitle,

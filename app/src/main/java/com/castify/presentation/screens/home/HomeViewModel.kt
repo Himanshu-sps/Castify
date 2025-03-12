@@ -58,11 +58,6 @@ class HomeViewModel(
                     )
                 }
 
-                // Set initial selected movie
-                /*upcomingMovies.firstOrNull()?.id?.let { movieId ->
-                    onEvent(HomeEvent.GetMovieDetails(movieId))
-                }*/
-
             } catch (e: Exception) {
                 e.printStackTrace()
                 _state.update { it.copy(isLoading = false) }
@@ -81,7 +76,6 @@ class HomeViewModel(
                 _state.update { currentState ->
                     currentState.copy(selectedMovie = selectedMovie)
                 }
-
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false) }
             }

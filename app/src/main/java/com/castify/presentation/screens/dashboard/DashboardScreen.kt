@@ -72,6 +72,7 @@ fun DashboardScreen(
 ) {
 
     val drawerItemFocusRequesters = remember { drawerItems.map { FocusRequester() } }
+    val firstUpcomingMovieFocusRequester = remember { FocusRequester() }
 
     val navController = rememberNavController()
     var currentRoute: String by remember { mutableStateOf("") }
@@ -105,17 +106,15 @@ fun DashboardScreen(
 
     BackPressHandledArea(
         onBackPressed = {
-            // 1. If drawer is opened then on back pressed close the drawer and focus selected drawer option
+            // 1. If drawer is opened then on back pressed close the drawer and focus first upcoming movie
             if (drawerState.currentValue == DrawerValue.Open) {
                 drawerState.setValue(DrawerValue.Closed)
-                drawerItemFocusRequesters[currentDrawerSelectedIndex].requestFocus()
-            }
-            else if (currentDrawerSelectedIndex == 1) onBackTriggered()
+                firstUpcomingMovieFocusRequester.requestFocus()
+            } else if (currentDrawerSelectedIndex == 1) onBackTriggered()
             else if (!isDrawerItemFocused) {
                 drawerItemFocusRequesters[currentDrawerSelectedIndex].requestFocus()
             } else {
                 drawerItemFocusRequesters[1].requestFocus()
-                //navController.popBackStack(route = ScreenRoutes.HomeScreenRoute, inclusive = true)
                 navController.navigate(route = ScreenRoutes.HomeScreenRoute)
             }
         },
@@ -135,6 +134,7 @@ fun DashboardScreen(
                     },
                 homeViewModel = homeViewModel,
                 drawerItemFocusRequesters = drawerItemFocusRequesters,
+                firstUpcomingMovieFocusRequester = firstUpcomingMovieFocusRequester,
                 drawerState = drawerState,
                 navController = navController,
                 selectedDrawerItemIndex = currentDrawerSelectedIndex,
@@ -146,16 +146,14 @@ fun DashboardScreen(
                         drawerState.setValue(DrawerValue.Closed)
                     }
 
-                    //if (!currentRoute.contains(screenRoute.toString(), true)) {
-                        navController.navigate(route = screenRoute) {
-                            if (screenRoute.toString().contains(ScreenRoutes.HomeScreenRoute.toString())) {
-                                popUpTo(
-                                    route = ScreenRoutes.HomeScreenRoute
-                                )
-                            }
-                            launchSingleTop = true
+                    navController.navigate(route = screenRoute) {
+                        if (screenRoute.toString().contains(ScreenRoutes.HomeScreenRoute.toString())) {
+                            popUpTo(
+                                route = ScreenRoutes.HomeScreenRoute
+                            )
                         }
-                    //}
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -167,6 +165,7 @@ fun DashboardNavigationDrawer(
     modifier: Modifier,
     homeViewModel: HomeViewModel,
     drawerItemFocusRequesters: List<FocusRequester>,
+    firstUpcomingMovieFocusRequester: FocusRequester,
     drawerState: DrawerState,
     navController: NavHostController,
     selectedDrawerItemIndex: Int,
@@ -230,6 +229,12 @@ fun DashboardNavigationDrawer(
                                 .handleDPadPreviewKeyEvents(
                                     onLeft = {
                                         drawerItemFocusRequesters[selectedDrawerItemIndex].requestFocus()
+                                    },
+                                    onRight = {
+                                        if (drawerState.currentValue == DrawerValue.Open) {
+                                            drawerState.setValue(DrawerValue.Closed)
+                                            firstUpcomingMovieFocusRequester.requestFocus()
+                                        }
                                     }
                                 ),
                             selected = selectedDrawerItemIndex == index,
@@ -266,7 +271,8 @@ fun DashboardNavigationDrawer(
                 NavComposable(
                     homeViewModel = homeViewModel,
                     navController = navController,
-                    onMovieClick = onMovieClick
+                    onMovieClick = onMovieClick,
+                    firstUpcomingMovieFocusRequester = firstUpcomingMovieFocusRequester
                 )
             }
 
@@ -279,6 +285,7 @@ private fun NavComposable(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
     onMovieClick: (MovieDetailsDTO) -> Unit,
+    firstUpcomingMovieFocusRequester: FocusRequester,
     navController: NavHostController = rememberNavController()
 ) {
     val closeDrawerWidth = 64.dp
@@ -294,7 +301,8 @@ private fun NavComposable(
             val state by homeViewModel.state.collectAsStateWithLifecycle()
             HomeScreen(
                 homeListState = state,
-                onMovieClick = onMovieClick
+                onMovieClick = onMovieClick,
+                firstUpcomingMovieFocusRequester = firstUpcomingMovieFocusRequester
             )
         }
 
